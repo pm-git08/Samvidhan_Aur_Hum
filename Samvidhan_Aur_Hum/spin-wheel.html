@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spin the Wheel - Nagrik Aur Samvidhan</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: url('spin_the_wheel_background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            animation: bounce 1s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .wheel-container {
+            position: relative;
+            margin: 0 auto;
+            width: 300px;
+            height: 300px;
+        }
+
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 10px solid #4a4a4a;
+            background: conic-gradient(
+                #d5a6a0 0deg 90deg,
+                #f7c6c7 90deg 180deg,
+                #b0b9c1 180deg 270deg,
+                #e2d0bc 270deg 360deg
+            );
+            transition: transform 4s cubic-bezier(0.25, 0.1, 0.25, 1);
+            transform-origin: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .wheel::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20%;
+            height: 20%;
+            background-color: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        .wheel-section {
+            position: absolute;
+            top: 0;
+            right: 50%;
+            width: 50%;
+            height: 50%;
+            transform-origin: 100% 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+        }
+
+        .wheel-section:nth-child(1) { transform: rotate(0deg) skew(-30deg); }
+        .wheel-section:nth-child(2) { transform: rotate(90deg) skew(-30deg); }
+        .wheel-section:nth-child(3) { transform: rotate(180deg) skew(-30deg); }
+        .wheel-section:nth-child(4) { transform: rotate(270deg) skew(-30deg); }
+
+        .wheel-section span {
+            transform: skew(30deg) rotate(15deg);
+            display: inline-block;
+            width: 100%;
+        }
+
+        .needle {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            width: 20px;
+            height: 40px;
+            background-color: #6d6d6d;
+            transform: translateX(-50%);
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            z-index: 10;
+            transform: rotate(180deg);
+        }
+
+        #spin-btn {
+            margin-top: 20px;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            background-color: #8e7c6f;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        #spin-btn:hover {
+            background-color: #7a6b59;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+        }
+
+        #spin-result {
+            margin-top: 30px;
+            font-size: 1.4rem;
+            color: #333;
+            font-weight: bold;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        #spin-result.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .quiz-container {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .quiz-question {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .quiz-option {
+            margin: 10px;
+            padding: 12px 20px;
+            background-color: #f94144;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .quiz-option:hover {
+            background-color: #577590;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .wrong-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            border-radius: 10px;
+            background: rgba(255, 99, 71, 0.9);
+            color: white;
+            font-size: 1.2rem;
+            display: none;
+            z-index: 100;
+            animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate(-51%, -51%); }
+            20%, 80% { transform: translate(-49%, -51%); }
+            30%, 50%, 70% { transform: translate(-51%, -49%); }
+            40%, 60% { transform: translate(-49%, -49%); }
+        }
+
+        .wrong-modal.show {
+            display: block;
+        }
+
+        .confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        #bunny-correct, #bunny-wrong {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            display: none;
+            z-index: 1000;
+            animation: hop 0.5s ease infinite alternate;
+        }
+
+        @keyframes hop {
+            from { transform: translateY(0); }
+            to { transform: translateY(-20px); }
+        }
+
+        #bunny-correct img, #bunny-wrong img {
+            width: 150px;
+            height: auto;
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2rem; }
+            .wheel-container { width: 250px; height: 250px; }
+            .wheel-section { font-size: 12px; }
+            .quiz-option { font-size: 0.9rem; padding: 10px 15px; }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti"></script>
+</head>
+<body>
+    <h1>Spin the Wheel - Nagrik Aur Samvidhan</h1>
+
+    <div class="wheel-container">
+        <div class="wheel" id="wheel">
+            <div class="wheel-section"><span>Article 14</span></div>
+            <div class="wheel-section"><span>Article 19</span></div>
+            <div class="wheel-section"><span>Article 21</span></div>
+            <div class="wheel-section"><span>Article 32</span></div>
+        </div>
+        <div class="needle"></div>
+    </div>
+
+    <button id="spin-btn">Spin the Wheel</button>
+    <div id="spin-result"></div>
+
+    <div class="quiz-container" id="quiz-container"></div>
+    <div class="wrong-modal" id="wrongModal">Oops! Wrong Answer. Try Again!</div>
+
+    <div id="bunny-correct">
+        <img src="right.png" alt="Correct Answer Bunny" />
+    </div>
+    <div id="bunny-wrong">
+        <img src="worng.png" alt="Wrong Answer Bunny" />
+    </div>
+    <!-- Back Button -->
+    <div class="back-container">
+        <a href="index.html" class="back-button">Back</a>
+    </div>
+
+    <style>
+        .back-container {
+            display: flex;
+            justify-content: flex-start; /* Align to the left */
+            position: fixed;
+            top: 50%; /* Vertically center */
+            left: 20px; /* Position slightly away from the left edge */
+            transform: translateY(-50%); /* Adjust to ensure it's fully vertically centered */
+            width: auto; /* Adjust width to content */
+        }
+
+        .back-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .back-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+
+
+    <script>
+        const wheel = document.getElementById('wheel');
+        const resultDisplay = document.getElementById('spin-result');
+        const quizContainer = document.getElementById('quiz-container');
+        const wrongModal = document.getElementById('wrongModal');
+        const bunnyCorrect = document.getElementById('bunny-correct');
+        const bunnyWrong = document.getElementById('bunny-wrong');
+
+        const articles = [
+            { article: 'Article 14: Right to Equality', question: 'What does Article 14 ensure?', options: ['Equality before law', 'Right to property', 'Freedom of speech', 'Right to education'], correctAnswer: 0 },
+            { article: 'Article 19: Freedom of Speech', question: 'Which fundamental right does Article 19 protect?', options: ['Freedom of Speech', 'Right to Life', 'Right to Property', 'Right to Religion'], correctAnswer: 0 },
+            { article: 'Article 21: Right to Life', question: 'What fundamental right does Article 21 guarantee?', options: ['Right to Life', 'Right to Education', 'Right to Work', 'Right to Privacy'], correctAnswer: 0 },
+            { article: 'Article 32: Constitutional Remedies', question: 'What does Article 32 provide?', options: ['Right to Constitutional Remedies', 'Right to Education', 'Freedom of Religion', 'Right to Property'], correctAnswer: 0 }
+        ];
+
+        document.getElementById('spin-btn').addEventListener('click', function() {
+            this.disabled = true;
+            const spinDegrees = Math.floor(Math.random() * 3600) + 720;
+            wheel.style.transform = `rotate(${spinDegrees}deg)`;
+
+            setTimeout(() => {
+                const result = determineArticle(spinDegrees % 360);
+                resultDisplay.textContent = `You landed on: ${result.article}`;
+                resultDisplay.classList.add('show');
+                displayQuiz(result);
+                this.disabled = false;
+            }, 4000);
+        });
+
+        function determineArticle(degrees) {
+            if (degrees < 90) return articles[0];
+            else if (degrees < 180) return articles[1];
+            else if (degrees < 270) return articles[2];
+            else return articles[3];
+        }
+
+        function displayQuiz(articleData) {
+            quizContainer.innerHTML = `
+                <div class="quiz-question">${articleData.question}</div>
+                ${articleData.options.map((option, index) => `<button class="quiz-option" data-index="${index}">${option}</button>`).join('')}
+            `;
+
+            const quizOptions = document.querySelectorAll('.quiz-option');
+            quizOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    const selectedIndex = parseInt(option.getAttribute('data-index'));
+                    if (selectedIndex === articleData.correctAnswer) {
+                        resultDisplay.textContent = `Correct! Well done!`;
+                        showConfetti();
+                        bunnyCorrect.style.display = 'block';
+                        setTimeout(() => {
+                            bunnyCorrect.style.display = 'none';
+                        }, 3000);
+                    } else {
+                        resultDisplay.textContent = `Oops! That's not correct. Try again!`;
+                        bunnyWrong.style.display = 'block';
+                        wrongModal.classList.add('show');
+                        setTimeout(() => {
+                            wrongModal.classList.remove('show');
+                            bunnyWrong.style.display = 'none';
+                        }, 2000);
+                    }
+                });
+            });
+        }
+
+        function showConfetti() {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#d5a6a0', '#f7c6c7', '#b0b9c1', '#e2d0bc']
+            });
+        }
+    </script>
+</body>
+</html>
