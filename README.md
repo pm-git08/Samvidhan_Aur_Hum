@@ -20,7 +20,7 @@ way. By quizzes, games, and educational content.
 
 Table of content 
 
-idea -> used in both online & offline mode
+Idea -> used in both online & offline mode
         real-time competition against user & bot
         used to explain new laws
         make to situation based game
@@ -30,7 +30,7 @@ idea -> used in both online & offline mode
 USP -> help to monetizing the platform without enable adds
        Explain laws in simplest language
        corporate companies can use our platform for their employees (such as educate about
-work & harassment)
+Work & harassment)
 
 Benefits -> increase knowledge for citizens
             promotes better understanding of rights & duties
