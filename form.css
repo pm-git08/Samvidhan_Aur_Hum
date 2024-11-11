@@ -1,0 +1,42 @@
+form {
+    background-color: #602ecb71;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(123, 47, 47, 0.3);
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 10px;
+
+    border: 1px solid #0f0d0d;
+    border-radius: 5px;
+}
+
+button[type="submit"] {
+    background-color: #58b088;
+    color: rgb(219, 24, 24);
+    padding: 10px 20px;
+    border: none;
+    border-radius:
+        5px;
+    cursor: pointer;
+
+}
+#loginForm {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #602ecb71;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(123, 47, 47, 0.3), 0 8px 17px rgba(0, 0, 0, 0.2); /* Enhanced shadow */
+}

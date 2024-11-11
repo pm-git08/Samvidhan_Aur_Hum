@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Samvidhan Aur Hum</title>
+    <style>
+        :root {
+            --primary-color: #000000e1;
+            --secondary-color: #708077;
+            --text-light: #ffffff;
+            --text-dark: #030303;
+            --background-light: #ffffff;
+            --card-background: #619b709c;
+            --highlight-card: #c0a7f067;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--background-light);
+        }
+
+        .header {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            margin-top: 0;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            max-width: 600px;
+        }
+
+        .background-shapes {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .circle {
+            position: absolute;
+            right: -10%;
+            top: -30%;
+            width: 50%;
+            height: 70%;
+            background-color: var(--secondary-color);
+            border-radius: 50%;
+        }
+
+        .triangle {
+            position: absolute;
+            bottom: 0;
+            left: 60%;
+            width: 0;
+            height: 0;
+            border-left: 100px solid transparent;
+            border-right: 100px solid transparent;
+            border-bottom: 100px solid var(--secondary-color);
+        }
+
+        .wave {
+            position: absolute;
+            bottom: -70px;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            background-color: var(--background-light);
+            border-radius: 100% 100% 0 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .game-card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(36, 33, 33, 0.15);
+        }
+
+        .game-info {
+            padding: 1.5rem;
+        }
+
+        .game-title {
+            font-size: 1.4rem;
+            margin-top: 0;
+            /* color: var(--primary-color); */
+            color: #ca05058f;
+        }
+
+        .game-description {
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .play-button {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: var(--text-light);
+            padding: 0.7rem 1.5rem;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            font-weight: bold;
+        }
+
+        .play-button:hover {
+            background-color: #c01daa;
+        }
+
+        .game-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .notification-icon {
+            position: fixed;
+            top: 50px;
+            right: 20px;
+            cursor: pointer;
+            background-color: var(--secondary-color);
+            border-radius: 50%;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .notification-icon svg {
+            width: 24px;
+            height: 24px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .notification-sidebar {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 300px;
+            height: 100%;
+            background-color: var(--card-background);
+            transition: right 0.3s ease;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .notification-sidebar.open {
+            right: 0;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 1rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .notification-content {
+            padding: 1rem;
+        }
+
+        .notification-item {
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .notification-item h3 {
+            margin-top: 0;
+            color: var(--primary-color);
+        }
+
+        /* Add these new styles for the slider */
+        .slider-wrapper {
+            max-width: 900px;
+            /* Increased max-width */
+            margin: 2.5rem auto;
+            /* Slightly increased margin */
+            position: relative;
+            overflow: hidden;
+            background-color: #f0f0f0;
+            border-radius: 12px;
+            /* Slightly increased border radius */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Slightly increased shadow */
+        }
+
+        .slider-container {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .slide {
+            flex: 0 0 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 2rem 2.5rem;
+            /* Increased padding */
+        }
+
+        .slide-content {
+            flex: 1;
+            max-width: 55%;
+            /* Adjusted text area */
+        }
+
+        .slide-image {
+            flex: 0 0 40%;
+            /* Increased image area */
+            text-align: right;
+        }
+
+        .slide-image img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            /* Increased image border radius */
+        }
+
+        .slide h2 {
+            font-size: 2rem;
+            /* Increased font size */
+            color: #4a90e2;
+            margin-bottom: 0.75rem;
+        }
+
+        .slide p {
+            font-size: 1.1rem;
+            /* Increased font size */
+            color: #333;
+            margin-bottom: 1.25rem;
+        }
+
+        .slide-button {
+            display: inline-block;
+            padding: 0.6rem 1.75rem;
+            /* Increased padding */
+            background-color: #ad1299;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            font-size: 1rem;
+            /* Increased font size */
+        }
+
+        .slide-button:hover {
+            background-color: #e67e22;
+        }
+
+        .prev-btn,
+        .next-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.3);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            /* Increased padding */
+            cursor: pointer;
+            font-size: 1.3rem;
+            /* Increased font size */
+            border-radius: 50%;
+        }
+
+        .prev-btn {
+            left: 10px;
+        }
+
+        .next-btn {
+            right: 10px;
+        }
+
+        .slider-dots {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            background-color: #bbb;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .dot.active {
+            background-color: #4a90e2;
+        }
+
+        /* Footer styles */
+        .footer {
+            background-color: var(--primary-color);
+            color: var(--text-light);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary-color);
+        }
+
+        .footer-copyright {
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        /* Navbar styles */
+        .navbar {
+            background-color: var(--primary-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-logo {
+            color: var(--text-light);
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .navbar-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .navbar-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+        }
+
+        .navbar-links a:hover {
+            background-color: var(--secondary-color);
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar above the header -->
+    <nav class="navbar">
+        <a href="index.html" class="navbar-logo" style="font-family:tahoma;">Samvidhan Aur Hum</a>
+        <div class="navbar-links">
+            <a href="Learning_Resources.html" style="font-family:tahoma;">Learning Resources</a>
+            <a href="contact.html" style="font-family:tahoma;">Contact Us</a>
+            <a href="register.html" style="font-family:tahoma;">Register</a>
+            <a href="forum.html" style="font-family:tahoma;">Forum</a>
+        </div>
+    </nav>
+
+    <header class="header">
+        <h1 style="font-family:tahoma;">Samvidhan Aur Hum<img src="adv.png" height="30px" width="60px"> </h1>
+        <p>Test your knowledge of legal principles in a fun way!</p>
+        <div class="background-shapes">
+            <div class="circle"></div>
+            <div class="triangle"></div>
+            <div class="wave"></div>
+        </div>
+    </header>
+
+    <!-- Slider starts immediately after the header -->
+    <div class="slider-wrapper">
+        <div class="slider-container">
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>Stuck in traffic?</h2>
+                    <p>Play our scenario game and test your knowledge of traffic law!</p>
+                    <a href="scenario.html" class="slide-button">Start Scenario</a>
+                </div>
+                <div class="slide-image">
+                    <img src="stuckTraffc.jpg" alt="Traffic Scenario">
+                </div>
+            </div>
+            <div class="slide">
+                <div class="slide-content">
+                    <h2>Know about your rights?</h2>
+                    <p>Test your constitution knowledge!</p>
+                    <a href="second.html" class="slide-button">Take the Test</a>
+                </div>
+                <div class="slide-image">
+                    <img src="constitutionalQuiz.jpg" alt="Constitution Knowledge">
+                </div>
+            </div>
+        </div>
+        <button class="prev-btn">&#10094;</button>
+        <button class="next-btn">&#10095;</button>
+        <div class="slider-dots">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+        </div>
+    </div>
+
+    <main class="container">
+        <div class="games-grid">
+            <div class="game-card">
+                <div class="game-icon">⚖️</div>
+                <div class="game-info">
+                    <h2 class="game-title"
+                        style="font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif">Quiz Trivia Game
+                    </h2>
+                    <p class="game-description"
+                        style="font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif">
+                        Test your knowledge of Indian law with our challenging quiz trivia game. Answer questions on
+                        various legal topics and compete with others!</p>
+                    <a href="second.html" class="play-button">Play Now</a>
+                </div>
+            </div>
+            <div class="game-card">
+                <div class="game-icon">🎡</div>
+                <div class="game-info">
+                    <h2 class="game-title"
+                        style="font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif">Spin the Wheel
+                        Game</h2>
+                    <p class="game-description"
+                        style="font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif">
+                        Spin the wheel of law! Land on different legal categories and answer questions to win points.
+                        How lucky and knowledgeable are you?</p>
+                    <a href="spin-wheel.html" class="play-button">Play Now</a>
+                </div>
+            </div>
+            <div class="game-card">
+                <div class="game-icon">🧩</div>
+                <div class="game-info">
+                    <h2 class="game-title"
+                        style="font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif">Scenario Based
+                        Game</h2>
+                    <p class="game-description"
+                        style="font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif">
+                        "Scenario-based game" immerses players in real-life scenarios, challenging them to apply
+                        constitutional knowledge to navigate complex situations, fostering a deeper understanding of
+                        Indian democracy and citizenship.</p>
+                    <a href="scenario.html" class="play-button">Play Now</a>
+                </div>
+            </div>
+            <div class="game-card">
+                <div class="game-icon">📚</div>
+                <div class="game-info">
+                    <h2 class="game-title"
+                        style="font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif">Study Materials
+                    </h2>
+                    <p class="game-description"
+                        style="font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif">
+                        Access comprehensive study materials on various aspects of Indian law. Enhance your legal
+                        knowledge at your own pace.</p>
+                    <a href="study2.html" class="play-button">Start Learning</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="notification-icon" onclick="toggleNotificationSidebar()">
+        🔔
+    </div>
+
+    <div class="notification-sidebar" id="notificationSidebar">
+        <div class="notification-header">
+            Law Updates
+            <button class="close-button" onclick="closeNotificationSidebar()">×</button>
+        </div>
+        <div class="notification-content">
+            <div class="notification-item">
+                <h3>New Labor Law Amendment</h3>
+                <p>The government has proposed a new amendment to the labor laws, affecting working hours and overtime
+                    pay.</p>
+            </div>
+            <div class="notification-item">
+                <h3>Environmental Protection Act Update</h3>
+                <p>Recent changes to the Environmental Protection Act introduce stricter penalties for industrial
+                    pollution.</p>
+            </div>
+            <div class="notification-item">
+                <h3>Supreme Court Ruling on Privacy</h3>
+                <p>The Supreme Court has issued a landmark ruling on digital privacy rights, impacting data protection
+                    laws.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="privacy_policy.html">Privacy Policy</a>
+                <a href="terms_of_service.html">Terms of Service</a>
+                <a href="contact.html">Contact Us</a>
+            </div>
+            <div class="footer-social">
+                <!-- Add social media icons or links here -->
+            </div>
+        </div>
+        <div class="footer-copyright">
+            &copy; 2024 Samvidhan Aur Hum. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        function toggleNotificationSidebar() {
+            const sidebar = document.getElementById('notificationSidebar');
+            sidebar.classList.toggle('open');
+        }
+
+        function closeNotificationSidebar() {
+            const sidebar = document.getElementById('notificationSidebar');
+            sidebar.classList.remove('open');
+        }
+
+        const slider = document.querySelector('.slider-container');
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.querySelector('.prev-btn');
+        const nextBtn = document.querySelector('.next-btn');
+        const dots = document.querySelectorAll('.dot');
+
+        let currentIndex = 0;
+        const slideWidth = slides[0].clientWidth;
+
+        function goToSlide(index) {
+            currentIndex = index;
+            slider.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+            updateDots();
+        }
+
+        function updateDots() {
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentIndex);
+            });
+        }
+
+        function nextSlide() {
+            goToSlide((currentIndex + 1) % slides.length);
+        }
+
+        function prevSlide() {
+            goToSlide((currentIndex - 1 + slides.length) % slides.length);
+        }
+
+        // Manual navigation
+        prevBtn.addEventListener('click', prevSlide);
+        nextBtn.addEventListener('click', nextSlide);
+
+        // Dot navigation
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => goToSlide(index));
+        });
+
+        // Auto-slide functionality
+        let slideInterval = setInterval(nextSlide, 5000); // Change slide every 5 seconds
+
+        // Pause auto-sliding when hovering over the slider
+        slider.addEventListener('mouseenter', () => {
+            clearInterval(slideInterval);
+        });
+
+        // Resume auto-sliding when mouse leaves the slider
+        slider.addEventListener('mouseleave', () => {
+            slideInterval = setInterval(nextSlide, 5000);
+        });
+
+        // Initial update
+        updateDots();
+    </script>
+
+    <script src="https://cdn.botpress.cloud/webchat/v2.2/inject.js"></script>
+    <script src="https://files.bpcontent.cloud/2024/11/11/10/20241111102221-Y7M6FWQ4.js"></script>
+
+</body>
+
+</html>
